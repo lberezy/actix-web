@@ -172,13 +172,13 @@ where
 /// }
 ///
 /// /// deserialize `Info` from request's querystring
-/// fn index(info: web::Query<Info>) -> String {
+/// fn index(info: web::Path<Info>) -> String {
 ///     format!("Welcome {}!", info.username)
 /// }
 ///
 /// fn main() {
 ///     let app = App::new().service(
-///         web::resource("/index.html").data(
+///         web::resource("/{info}").data(
 ///             // change query extractor configuration
 ///             web::Query::<Info>::configure(|cfg| {
 ///                 cfg.error_handler(|err, req| {  // <- create custom error response
