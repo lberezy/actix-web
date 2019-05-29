@@ -8,9 +8,9 @@ use actix_router::PathDeserializer;
 use serde::de;
 
 use crate::dev::Payload;
+use crate::error::PathPayloadError;
 use crate::request::HttpRequest;
 use crate::FromRequest;
-use crate::error::PathPayloadError;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 /// Extract typed information from the request's path.
@@ -165,16 +165,16 @@ where
     #[inline]
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         let error_handler = req
-        .app_data::<Self::Config>()
-        .map(|c| c.ehandler.clone())
-        .unwrap_or(None);
+            .app_data::<Self::Config>()
+            .map(|c| c.ehandler.clone())
+            .unwrap_or(None);
 
         de::Deserialize::deserialize(PathDeserializer::new(req.match_info()))
             .map(|inner| Path { inner })
             .map_err(move |e| {
                 log::debug!(
                     "Failed during Path extractor deserialization. \
-                    Request path: {:?}",
+                     Request path: {:?}",
                     req.path()
                 );
                 if let Some(error_handler) = error_handler {
@@ -238,9 +238,7 @@ impl PathConfig {
 
 impl Default for PathConfig {
     fn default() -> Self {
-        PathConfig {
-            ehandler: None,
-        }
+        PathConfig { ehandler: None }
     }
 }
 
